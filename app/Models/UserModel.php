@@ -3,17 +3,31 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable; 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 
-class UserModel extends Model
+class UserModel extends Authenticatable
 {
-    use HasFactory;
+    use HasFactory, Notifiable;
 
-    protected $guarded = ['id_user'];
     protected $table = 'user';
-    protected $fillable = ['nama_user', 'email', 'password', 'no_telepon', 'id_role',];
+    protected $guarded = ['id'];
+    protected $fillable = [
+        'nama_user',
+        'email', 
+        'password', 
+        'no_telepon', 
+        'role_id',
+    ];
 
     public function role(){
-        return $this->belongsTo(Role::class, 'id_role');
+        return $this->belongsTo(Role::class, 'role_id');
+    }
+
+    public function getUser($id = null){
+        if(!$id == null){
+            return $this->select('user.nama_user' )->where('user.id', $id)->first();
+        }
     }
 }

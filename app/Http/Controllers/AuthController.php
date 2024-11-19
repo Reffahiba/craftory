@@ -6,6 +6,8 @@ use App\Models\UserModel;
 use App\Models\Role;
 use Illuminate\Http\Request;
 use PhpParser\Node\Expr\New_;
+use Illuminate\Support\Facades\Auth;
+
 
 class AuthController extends Controller
 {
@@ -18,40 +20,72 @@ class AuthController extends Controller
         $this->userModel = new UserModel();
     }
 
-    public function signIn(){
-        return view('sign-in');
+    public function admin_login(){
+        return view('admin-login');
     }
 
-
-    public function create(){
+    public function admin_register(){
         $roleModel = new Role();
         $role = $roleModel->getRole();
 
+        if(!$role->contains('nama_role', 'admin')){
+            $role->push(new Role(['nama_role' => 'admin']));
+        }
+
         $data = [
-            'title' => 'Register',
+            'title' => 'Register Admin',
             'role' => $role
         ];
 
-        return view('register', $data);
+        return view('admin-register', $data);
     }
 
-    public function store(Request $request){
+    public function admin_register_proses(Request $request){
         $request->validate([
             'nama_user' => 'required|string|max:255',
-            'email' => 'required|string|max:255',
-            'password' => 'required|string|confirmed|max:255',
-            'no_telepon' => 'required|string|max:255',
-            'id_role' => 'required|integer'
+            'email' => 'required|email|unique:user,email',
+            'no_telepon' => 'required|string|regex:/^[0-9]+$/|max:15',
+            'password' => 'required|string|confirmed|min:8',
         ]);
 
-        $this->userModel->create([
+        $user = UserModel::create([
             'nama_user' => $request->input('nama_user'),
             'email' => $request->input('email'),
-            'password' => $request->input('password'),
             'no_telepon' => $request->input('no_telepon'),
-            'id_role' => $request->input('id_role'),
+            'password' => bcrypt($request->input('password')),
+            'role_id' => 1,
         ]);
 
-        return redirect()->route('sign-in')->with('success', 'User berhasil ditambahkan');
+        return redirect()->route('login-admin');
     }
+
+    public function admin_login_proses(Request $request){
+        $kredensial = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string',
+        ]);
+
+        if(Auth::attempt($kredensial)){
+            $request->session()->regenerate();
+
+            $role = Auth::user()->role_id;
+
+            if($role === 1){
+                return redirect()->intended('/dashboard_admin');
+            }
+        }
+
+        return back()->withErrors([
+            'email' => 'Kredensial yang dimasukkan tidak sesuai.',
+        ]); 
+    }
+
+    public function logout_admin(Request $request){
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/admin_login')->with('sukses', 'Kamu berhasil logout');
+    }
+
 }
