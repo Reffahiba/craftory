@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title><?= $title ?></title>
+    <title>Register Toko</title>
     @vite('resources/css/app.css')
     <style>
         body {
@@ -37,7 +37,7 @@
                             </div>
                         @endif
 
-                        <form action="{{ route('register-proses') }}" method="POST">
+                        <form action="{{ route('register-proses') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="flex flex-col justify-center items-center">
                                 <input type="text" name="nama_user" id="nama_user" placeholder="Nama Lengkap" class="outline-none px-3 py-2 rounded-full my-2">
@@ -45,6 +45,23 @@
                                 <input type="tel" name="no_telepon" id="no_telepon" placeholder="Nomor Telepon" class="outline-none px-3 py-2 rounded-full my-2">
                                 <input type="password" name="password" id="password" placeholder="Password" class="outline-none px-3 py-2 rounded-full my-2">
                                 <input type="password" name="password_confirmation" id="password_confirmation" placeholder="Re-enter Password" class="outline-none px-3 py-2 rounded-full my-2">
+                                <input type="file" name="foto_user" id="foto_user">
+                                {{-- <div class="flex flex-col justify-center items-center py-1">
+                                    <div class="relative w-64">
+                                        <input type="file" name="foto_user" id="foto_user" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                                        <div class="flex items-center justify-between px-3 py-2 bg-white rounded-full border border-gray-300">
+                                            <span class="text-gray-500 truncate">Pilih foto Anda</span>
+                                            <svg 
+                                                class="w-5 h-5 text-gray-400" 
+                                                xmlns="http://www.w3.org/2000/svg" 
+                                                fill="none" 
+                                                viewBox="0 0 24 24" 
+                                                stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-4.553a2.121 2.121 0 00-3-3L12 7l-4.553-4.553a2.121 2.121 0 00-3 3L9 10m6 0v6a3 3 0 01-3 3h-3a3 3 0 01-3-3v-6m6 0h3a3 3 0 013 3v6a3 3 0 01-3 3H9a3 3 0 01-3-3v-6" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div> --}}
                                 <select name="role_id" id="role_id" required class="outline-none px-3 py-2 rounded-full my-2">
                                     <option value="" disabled selected>Pilih Role</option>
                                     @foreach ($role as $roleItem )

@@ -17,11 +17,19 @@ class Produk extends Model
         'deskripsi',
         'harga',
         'stok',
-        'id_user',
-        'id_kategori',
+        'user_id',
+        'kategori_id',
     ];
 
+    public function kategori(){
+        return $this->belongsTo(Kategori::class, 'kategori_id');
+    }
+
+    public function item_pesanan(){
+        return $this->hasMany(ItemPesanan::class, 'produk_id');
+    }
+
     public function getProduk(){
-        return $this->all();
+        return Produk::with('kategori')->get();
     }
 }

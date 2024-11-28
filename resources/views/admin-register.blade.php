@@ -37,7 +37,7 @@
                             </div>
                         @endif
 
-                        <form action="{{ route('register-admin-proses') }}" method="POST">
+                        <form action="{{ route('register-admin-proses') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="flex flex-col justify-center items-center">
                                 <input type="text" name="nama_user" id="nama_user" placeholder="Nama Lengkap" class="outline-none px-3 py-2 rounded-full my-2">
@@ -45,6 +45,7 @@
                                 <input type="tel" name="no_telepon" id="no_telepon" placeholder="Nomor Telepon" class="outline-none px-3 py-2 rounded-full my-2">
                                 <input type="password" name="password" id="password" placeholder="Password" class="outline-none px-3 py-2 rounded-full my-2">
                                 <input type="password" name="password_confirmation" id="password_confirmation" placeholder="Re-enter Password" class="outline-none px-3 py-2 rounded-full my-2">
+                                <input type="file" name="foto_user" id="foto_user">
                                 <button type="submit" class="bg-purple-brown text-white text-lg rounded-full my-3 px-8 font-semibold">REGISTER</button>
                             </div>
                         </form>

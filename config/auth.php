@@ -38,7 +38,22 @@ return [
     'guards' => [
         'web' => [
             'driver' => 'session',
-            'provider' => 'users',
+            'provider' => 'user',
+        ],
+
+        'admin' => [
+            'driver' => 'session',
+            'provider' => 'user',
+        ],
+
+        'penjual' => [
+            'driver' => 'session',
+            'provider' => 'user',
+        ],
+
+        'pembeli' => [
+            'driver' => 'session',
+            'provider' => 'user',
         ],
     ],
 
@@ -60,7 +75,7 @@ return [
     */
 
     'providers' => [
-        'users' => [
+        'user' => [
             'driver' => 'eloquent',
             'model' => App\Models\UserModel::class,
         ],

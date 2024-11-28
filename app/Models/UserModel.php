@@ -18,6 +18,7 @@ class UserModel extends Authenticatable
         'email', 
         'password', 
         'no_telepon', 
+        'foto_user',
         'role_id',
     ];
 
@@ -25,6 +26,10 @@ class UserModel extends Authenticatable
         return $this->belongsTo(Role::class, 'role_id');
     }
 
+    public function toko(){
+        return $this->hasOne(Toko::class);
+    }
+        
     public function getUser($id = null){
         if(!$id == null){
             return $this->select('user.nama_user' )->where('user.id', $id)->first();

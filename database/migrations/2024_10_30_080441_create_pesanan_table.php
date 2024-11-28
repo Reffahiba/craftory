@@ -18,8 +18,8 @@ return new class extends Migration
             $table->text('alamat_pengiriman');
             $table->string('metode_pembayaran');
             $table->char('status_pesanan');
-            $table->unsignedBigInteger('pesanan_id');
-            $table->foreign('pesanan_id')->references('id')->on('pesanan')->onDelete('cascade');
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('user')->onDelete('cascade');
             $table->timestamps();
         });
     }

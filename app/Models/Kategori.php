@@ -9,12 +9,14 @@ class Kategori extends Model
 {
     use HasFactory;
 
-    use HasFactory;
-
     protected $guarded = ['id'];
     protected $table = 'kategori';
     protected $fillable = ['nama_kategori', 'deskripsi'];
 
+    public function produk(){
+        return $this->hasMany(Produk::class, 'kategori_id');
+    }
+    
     public function getKategori(){
         return $this->all();
     }

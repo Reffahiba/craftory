@@ -91,7 +91,10 @@
                         @endforeach
                     </div>
 
-                    <button type="submit" class="rounded-lg bg-rust px-4 py-2 font-bold text-white">Submit</button>
+                    <div class="flex">
+                        <button type="submit" class="rounded-lg bg-rust px-4 py-2 mr-2 font-bold text-white">Submit</button>
+                        <button class="rounded-lg bg-purple-brown px-4 py-2 font-bold text-white"><a href="{{ route('data-produk') }}">Back</a></button>
+                    </div>
                 </form>
             </div>
         </div>

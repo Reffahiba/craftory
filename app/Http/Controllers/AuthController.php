@@ -46,7 +46,16 @@ class AuthController extends Controller
             'email' => 'required|email|unique:user,email',
             'no_telepon' => 'required|string|regex:/^[0-9]+$/|max:15',
             'password' => 'required|string|confirmed|min:8',
+            'foto_user' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
+
+        if($request->hasFile('foto_user')){
+            $foto_user = $request->file('foto_user');
+            $filename = time() . '_' . $foto_user->getClientOriginalName();
+            $fotoPath = $foto_user->move(('user/img/'), $filename);
+        } else {
+            $fotoPath = null;
+        }
 
         $user = UserModel::create([
             'nama_user' => $request->input('nama_user'),
@@ -54,6 +63,7 @@ class AuthController extends Controller
             'no_telepon' => $request->input('no_telepon'),
             'password' => bcrypt($request->input('password')),
             'role_id' => 1,
+            'foto_user' => 'user/img/' . $filename,
         ]);
 
         return redirect()->route('login-admin');
@@ -71,7 +81,7 @@ class AuthController extends Controller
             $role = Auth::user()->role_id;
 
             if($role === 1){
-                return redirect()->intended('/dashboard_admin');
+                return redirect()->intended('admin/dashboard_admin');
             }
         }
 
@@ -86,6 +96,40 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         return redirect('/admin_login')->with('sukses', 'Kamu berhasil logout');
+    }
+
+    public function verifikasi_toko($id){
+        $user = UserModel::findOrFail($id);
+
+        if($user->role_id != 2){
+            return redirect()->back()->with('error', 'User ini bukan penjual');
+        }
+
+        if($user->toko){
+            $user->toko->status_verifikasi = 'terverifikasi';
+            $user->toko->save();
+
+            return redirect()->back()->with('sukses', 'Toko berhasil diverifikasi');
+        }
+
+        return redirect()->back()->with('sukses', 'Toko tidak ditemukan');
+    }
+
+    public function tolak_verifikasi_toko($id){
+        $user = UserModel::findOrFail($id);
+
+        if($user->role_id != 2){
+            return redirect()->back()->with('error', 'User ini bukan penjual');
+        }
+
+        if($user->toko){
+            $user->toko->status_verifikasi = 'ditolak';
+            $user->toko->save();
+
+            return redirect()->back()->with('sukses', 'Toko ditolak!');
+        }
+
+        return redirect()->back()->with('sukses', 'Toko tidak ditemukan');
     }
 
 }

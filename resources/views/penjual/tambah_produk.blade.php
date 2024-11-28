@@ -26,7 +26,7 @@
             </div>
         </header>
 
-        <h1 class="text-3xl font-semibold mt-5 ml-3">Tambah Kategori</h1>
+        <h1 class="text-3xl font-semibold mt-5 ml-3">Tambah Produk</h1>
         <div class="flex-grow bg-white p-5">
             <div class="bg-light-apricot rounded-xl shadow-2xl p-5">
 
@@ -40,16 +40,22 @@
                     </div>
                 @endif
 
-                <form action="{{ route('kategori-store') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+                <form action="{{ route('produk-store') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
                     @csrf
                     <div>
-                        <label for="nama_kategori" class="block font-bold pb-1">Nama Kategori:</label>
-                        <input type="text" name="nama_kategori" id="nama_kategori" class="block w-full rounded-lg py-2 px-2 border border-gray-300">
-                        @foreach ($errors->get('nama_kategori') as $msg )
+                        <label for="foto_produk" class="block font-bold pb-1">Foto Produk:</label>
+                        <input type="file" name="foto_produk" id="foto_produk" class="block w-full rounded-lg py-2 px-2 border border-gray-300">
+                        @foreach ($errors->get('foto_produk') as $msg )
                             <p class="text-red-600">{{ $msg }}</p>
                         @endforeach
                     </div>
-
+                    <div>
+                        <label for="nama_produk" class="block font-bold pb-1">Nama Produk:</label>
+                        <input type="text" name="nama_produk" id="nama_produk" class="block w-full rounded-lg py-2 px-2 border border-gray-300">
+                        @foreach ($errors->get('nama_produk') as $msg )
+                            <p class="text-red-600">{{ $msg }}</p>
+                        @endforeach
+                    </div>
                     <div>
                         <label for="deskripsi" class="block font-bold pb-1">Deskripsi:</label>
                         <input type="text" name="deskripsi" id="deskripsi" class="block w-full rounded-lg py-2 px-2 border border-gray-300">
@@ -57,8 +63,36 @@
                             <p class="text-red-600">{{ $msg }}</p>
                         @endforeach
                     </div>
-
-                    <button type="submit" class="rounded-lg bg-rust px-4 py-2 font-bold text-white">Submit</button>
+                    <div>
+                        <label for="harga" class="block font-bold pb-1">Harga:</label>
+                        <input type="number" name="harga" id="harga" class="block w-full rounded-lg py-2 px-2 border border-gray-300">
+                        @foreach ($errors->get('harga') as $msg )
+                            <p class="text-red-600">{{ $msg }}</p>
+                        @endforeach
+                    </div>
+                    <div>
+                        <label for="stok" class="block font-bold pb-1">Stok:</label>
+                        <input type="number" name="stok" id="stok" class="block w-full rounded-lg py-2 px-2 border border-gray-300">
+                        @foreach ($errors->get('stok') as $msg )
+                            <p class="text-red-600">{{ $msg }}</p>
+                        @endforeach
+                    </div>
+                    <div>
+                        <label for="kategori_id" class="block font-bold pb-1">Kategori:</label>
+                        <select name="kategori_id" id="kategori" required class="block w-full rounded-lg py-2 px-2 border border-gray-300">
+                            <option value="" disabled selected>Pilih Kategori</option>
+                            @foreach ($kategori as $kategoriItem )
+                                <option value="{{ $kategoriItem->id }}">{{ ucwords($kategoriItem->nama_kategori) }}</option>
+                            @endforeach
+                        </select>
+                        @foreach ($errors->get('kategori_id') as $msg )
+                            <p class="text-red-600">{{ $msg }}</p>
+                        @endforeach
+                    </div>
+                    <div class="flex">
+                        <button type="submit" class="rounded-lg bg-rust px-4 py-2 mr-2 font-bold text-white">Submit</button>
+                        <button class="rounded-lg bg-purple-brown px-4 py-2 font-bold text-white"><a href="{{ route('data-produk') }}">Back</a></button>
+                    </div>
                 </form>
             </div>
         </div>
