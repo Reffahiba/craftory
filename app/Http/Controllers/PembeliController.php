@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\ItemPesanan;
 use App\Models\Kategori;
+use App\Models\Pembayaran;
 use App\Models\Pesanan;
 use App\Models\Produk;
 use App\Models\Toko;
 use App\Models\UserModel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 // use Midtrans\Snap;
 // use Midtrans\Config;
 use Illuminate\Support\Facades\Auth;
@@ -38,15 +40,37 @@ class PembeliController extends Controller
         // Config::$is3ds = true;
     }
 
-    public function dashboard_pembeli(){
+    public function dashboard_pembeli(Request $request){
         $userId = Auth::guard('pembeli')->id();
         $pesanan = Pesanan::where('user_id', Auth::id())->latest()->first();
+        $produk = Produk::whereExists(function ($query) {
+            $query->select(DB::raw(1)) // memilih kolom apa saja, misalnya 1
+                ->from('toko')
+                ->whereRaw('produk.toko_id = toko.id')
+                ->where('toko.status_verifikasi', 'terverifikasi');
+        });
+
+        $filterKategori = $request->filled('kategori');
+        $filterHarga = $request->filled('min_harga') && $request->filled('max_harga') && ($request->min_harga > 0 || $request->max_harga > 0);
+        
+        if ($filterKategori) {
+            $produk->whereHas('kategori', function ($q) use ($request) {
+                $q->where('nama_kategori', 'like', '%' . $request->kategori . '%');
+            });
+        }
+
+        if ($filterHarga) {
+            $produk->whereBetween('harga', [$request->min_harga, $request->max_harga]);
+        }
+
+        $produk = $produk->get();
 
         $data = [
             'title' => 'Dashboard Pembeli',
             'user' => $this->userModel->getUser($userId),
-            'produk' => $this->produk->getProduk(),
+            'produk' => $produk,
             'pesanan' => $pesanan,
+            'kategori' => $this->kategori->getKategori(),
         ];
 
         return view('pembeli/dashboard_pembeli', $data);
@@ -66,11 +90,12 @@ class PembeliController extends Controller
         return  view('pembeli/edit_profile', compact('user'));
     }
 
-    public function update_profile_pembeli(Request $request, $id){
+    public function update_profile_pembeli(Request $request, $id){   
         $user = UserModel::findOrFail($id);
         $user->foto_user = $request->foto_user;
         $user->nama_user = $request->nama_user;
         $user->email = $request->email;
+        $user->no_telepon = $request->no_telepon;
 
         if($request->hasFile('foto_user')){
             $fileName = time() . '.' . $request->foto_user->extension();
@@ -90,7 +115,6 @@ class PembeliController extends Controller
     public function simpan_pesanan(Request $request){
         $request->validate([
             'alamat_pengiriman' => 'required|string|max:255',
-            'metode_pembayaran' => 'required|string',
         ]);
 
         // Buat pesanan baru
@@ -99,7 +123,6 @@ class PembeliController extends Controller
             'status_pesanan' => 'pending',
             'tanggal_pemesanan' => now(),
             'alamat_pengiriman' => $request->alamat_pengiriman,
-            'metode_pembayaran' => $request->metode_pembayaran,
             'total_harga' => 0,
         ]);
 
@@ -119,15 +142,12 @@ class PembeliController extends Controller
     public function tambah_keranjang(Request $request)
     {
         $produk = Produk::findOrFail($request->produk_id); // Mencari produk berdasarkan ID
-        $pesanan = Pesanan::firstOrCreate(
-            ['user_id' => Auth::id(), 'status_pesanan' => 'pending'],
-            ['tanggal_pemesanan' => now(), 'total_harga' => 0]
-        );
+        $pesanan = Pesanan::where('user_id', Auth::id())->where('status_pesanan', 'pending')->first();
 
         if(!$pesanan){
-            return redirect()->route('buat_pesanan');
+            return redirect()->route('buat-pesanan');
         }
-
+        
         $itemPesanan = ItemPesanan::firstOrNew([
             'pesanan_id' => $pesanan->id,
             'produk_id' => $produk->id,
@@ -161,6 +181,7 @@ class PembeliController extends Controller
     {
         $keranjang = ItemPesanan::findOrFail($id);
         $produk = $keranjang->produk;
+        $pesanan = $keranjang->pesanan; 
 
         if ($action == 'tambah') {
             $keranjang->kuantitas += 1;
@@ -172,59 +193,84 @@ class PembeliController extends Controller
         $keranjang->sub_total = $keranjang->kuantitas * $produk->harga;
         $keranjang->save();
 
+        $pesanan->total_harga = ItemPesanan::where('pesanan_id', $pesanan->id)->sum('sub_total');
+        $pesanan->save();
+
         return back(); 
     }
 
     public function hapus_keranjang($id)
     {
         $keranjang = ItemPesanan::findOrFail($id);
+        $pesanan = $keranjang->pesanan; 
         $keranjang->delete();
+
+        $pesanan->total_harga = ItemPesanan::where('pesanan_id', $pesanan->id)->sum('sub_total');
+        $pesanan->save();
 
         return back();
     }
 
-    // public function checkout(Request $request)
-    // {
-    //     // Ambil data pesanan dan total harga dari session atau database
-    //     $totalHarga = $request->input('total_harga');
-    //     $pesananId = $request->input('pesanan_id');
+    public function checkOut(){
+        $pesanan = Pesanan::where('user_id', Auth::id())
+            ->where('status_pesanan', 'pending')
+            ->first();
 
-    //     // Buat transaksi
-    //     $transactionDetails = [
-    //         'order_id' => 'ORDER-' . time(),
-    //         'gross_amount' => $totalHarga, // Total pembayaran
-    //     ];
+        if ($pesanan) {
+            // Proses checkout, misalnya ubah status pesanan
+            $pesanan->update(['status_pesanan' => 'check out']);
 
-    //     // Data pemesan
-    //     $customerDetails = [
-    //         'first_name' => 'John',
-    //         'last_name' => 'Doe',
-    //         'email' => 'customer@example.com',
-    //         'phone' => '08123456789',
-    //         'billing_address' => [
-    //             'address' => 'Jl. Example No. 1',
-    //             'city' => 'Jakarta',
-    //             'postal_code' => '12345',
-    //             'phone' => '08123456789',
-    //         ],
-    //     ];
+            $pembayaran = Pembayaran::create([
+                'pesanan_id' => $pesanan->id,
+                'jumlah_dibayar' => $pesanan->item_pesanan->sum('sub_total'), // Total pembayaran
+                'tanggal_pembayaran' => now(),
+            ]);
+        } 
+        //     else {
+        // //     return redirect()->route('keranjang', $pesanan->id)->with('error', 'Pesanan tidak ditemukan.');
+        // // }
 
-    //     // Data untuk transaksi Midtrans
-    //     $transaction = [
-    //         'payment_type' => 'credit_card', // Jenis pembayaran, bisa disesuaikan
-    //         'credit_card' => [
-    //             'secure' => true, // Jika ingin menggunakan 3D Secure
-    //         ],
-    //         'transaction_details' => $transactionDetails,
-    //         'customer_details' => $customerDetails,
-    //     ];
+        // Set your Merchant Server Key
+        \Midtrans\Config::$serverKey = config('midtrans.serverKey');
+        // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
+        \Midtrans\Config::$isProduction = false;
+        // Set sanitization on (default)
+        \Midtrans\Config::$isSanitized = true;
+        // Set 3DS transaction for credit card to true
+        \Midtrans\Config::$is3ds = true;
 
-    //     // Kirim data ke Midtrans
-    //     try {
-    //         $snapToken = Snap::getSnapToken($transaction);
-    //         return view('checkout', compact('snapToken', 'pesananId'));
-    //     } catch (\Exception $e) {
-    //         return response()->json(['error' => $e->getMessage()]);
-    //     }
-    // }
+        $params = array(
+            'transaction_details' => array(
+                'order_id' => rand(), // Buat order_id yang unik
+                'gross_amount' => $pesanan->item_pesanan->sum('sub_total'), // Total harga pesanan
+            ),
+            'customer_details' => array(
+                'first_name' => Auth::user()->nama_user,
+                'email' => Auth::user()->email,
+            ),
+        );
+
+        $snapToken =  \Midtrans\Snap::getSnapToken($params);
+        $pembayaran->snap_token = $snapToken;
+        $pembayaran->save();
+        
+        return redirect()->route('checkOut-selesai', $pembayaran->id);
+    }
+
+    public function checkOut_selesai($id){
+        $pembayaran = Pembayaran::find($id);
+        if(!$pembayaran){
+            return redirect()->route('keranjang');
+        }
+
+        $pesanan = $pembayaran->pesanan;
+        
+
+        $data = [
+            'pembayaran' => $pembayaran,
+            'pesanan' => $pesanan,
+        ];
+
+        return view('pembeli.checkout_sukses', $data);
+    }
 }

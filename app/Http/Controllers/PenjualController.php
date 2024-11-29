@@ -27,20 +27,28 @@ class PenjualController extends Controller
     } 
 
     public function dashboard_penjual(){
-        $jumlahProduk = Produk::count();
+        $userId = Auth::id();
+        $toko = Toko::where('user_id', $userId)->first();
+        $produk = Produk::where('toko_id', $toko->id)->get();
+        $jumlahProduk = $produk->count();
 
         $data = [
             'title' => 'Dashboard Penjual',
             'jumlahProduk' => $jumlahProduk,
+            'toko' => $toko,
         ];
 
         return view('penjual/dashboard_penjual', $data);
     }
 
     public function profile_penjual(){
+        $userId = Auth::id();
+        $toko = Toko::where('user_id', $userId)->first();
+        
         $data = [
             'title' => 'Profile Penjual',
             'user' => $this->userModel->getUser(),
+            'toko' => $toko,
         ];
 
         return view('penjual/profile_penjual', $data);
@@ -69,10 +77,15 @@ class PenjualController extends Controller
     }
 
     public function data_produk(){
+        $userId = Auth::id();
+        $toko = Toko::where('user_id', $userId)->first();
+        
+
         $data = [
             'title' => 'Dashboard Penjual',
-            'user' => $this->userModel->getUser(),
-            'produk' => $this->produk->getProduk(),
+            'user' => $this->userModel->getUser($userId),
+            'produk' => $this->produk->getProdukByPenjual($userId),
+            'toko' => $toko,
         ];
 
         return view('penjual/data_produk', $data);
@@ -109,6 +122,11 @@ class PenjualController extends Controller
         $lastId = Produk::max('id'); 
         $newId = $lastId ? $lastId + 1 : 1;
 
+        $toko = Toko::where('user_id', Auth::id())->first();
+        if (!$toko) {
+            return redirect()->back()->withErrors(['error' => 'Toko tidak ditemukan!']);
+        }
+
         $produk = new Produk();
         $produk->id = $newId;
         $produk->foto_produk = 'produk/img/' . $filename;
@@ -116,7 +134,7 @@ class PenjualController extends Controller
         $produk->deskripsi = $validateData['deskripsi'];
         $produk->harga = $validateData['harga'];
         $produk->stok = $validateData['stok'];
-        $produk->user_id = Auth::id();
+        $produk->toko_id = $toko->id;
         $produk->kategori_id = $validateData['kategori_id'];
         $produk->save();
 

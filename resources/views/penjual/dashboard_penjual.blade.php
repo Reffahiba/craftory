@@ -17,13 +17,19 @@
             <img src="{{ asset('assets/img/craftory-word.png') }}" alt="craftory-word" class="w-50 h-50 ml-5">
         </div>
         <div class="flex items-center space-x-4">
+            @if ($toko->status_verifikasi == 'terverifikasi')
+                <img src="{{ asset('assets/img/tick-circle.png') }}" alt="terverifikasi" class="w-7 h-7">
+            @elseif ($toko->status_verifikasi == 'menunggu')
+                <img src="{{ asset('assets/img/info-circle.png') }}" alt="menunggu" class="w-7 h-7">
+            @else
+                <img src="{{ asset('assets/img/close-circle.png') }}" alt="ditolak" class="w-7 h-7">
+            @endif
             <span class="text-gray-700">Halo, <?= $user->nama_user ?></span>
             <img src="{{ asset($user->foto_user) }}" alt="user-profile" class="w-10 h-10 rounded-full" id="gambar-profil">
 
             <div id="dropdown" class="hidden absolute mt-44 right-0 w-48 bg-white rounded-md shadow-lg z-10">
                 <div class="py-2">
                     <a href="{{ route('profile-penjual') }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-300">Profil</a>
-                    <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-300">Pengaturan</a>
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
                         <button type="submit" class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-300">Keluar</button>
@@ -50,9 +56,6 @@
                     </a>
                     <a href="#" class="flex items-center space-x-1 p-3 rounded text-purple-brown font-medium hover:bg-red-200">
                         <span>🛒</span><span>Pesanan</span>
-                    </a>
-                    <a href="#" class="flex items-center space-x-1 p-3 rounded text-purple-brown font-medium hover:bg-red-200">
-                        <span>📊</span><span>Laporan</span>
                     </a>
                     <a href="/pengaturan_toko" class="flex items-center space-x-1 p-3 rounded text-purple-brown font-medium hover:bg-red-200">
                         <span>⚙️</span><span>Pengaturan Toko</span>

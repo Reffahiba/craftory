@@ -27,33 +27,6 @@
 </header>
 
 <div class="h-screen flex">
-<!-- Sidebar -->
-    <aside id="sidebar" class="hidden left-0 w-64 bg-light-apricot p-2">
-        <div class="flex flex-col items-center">
-            <img src="{{ asset('assets/img/image.png') }}" alt="craftory-icon" class="w-50 h-50 mt-1">
-            <span class="text-lg font-semibold text-red-700">Craftory</span>
-        </div>
-        <nav class="w-62 shadow-md">
-            <div class="flex flex-col space-y-3">
-                <a href="{{ route('dashboard-penjual') }}" class="flex items-center space-x-1 p-3 rounded bg-rust text-white font-medium">
-                    <span>🏠</span><span>Home</span>
-                </a>
-                <a href="{{ route('data-produk') }}" class="flex items-center space-x-1 p-3 rounded text-purple-brown font-medium hover:bg-red-200">
-                    <span>📦</span><span>Produk</span>
-                </a>
-                <a href="{{ route('data-toko') }}" class="flex items-center space-x-1 p-3 rounded text-purple-brown font-medium hover:bg-red-200">
-                    <span>🛒</span><span>Pesanan</span>
-                </a>
-                <a href="#" class="flex items-center space-x-1 p-3 rounded text-purple-brown font-medium hover:bg-red-200">
-                    <span>📊</span><span>Laporan</span>
-                </a>
-                <a href="/pengaturan_toko" class="flex items-center space-x-1 p-3 rounded text-purple-brown font-medium hover:bg-red-200">
-                    <span>⚙️</span><span>Pengaturan Toko</span>
-                </a>
-            </div>
-        </nav>
-    </aside>
-
     <!-- Main Content -->
     <div class="flex flex-col flex-1 transition-all duration-300 p-3" id="main-content">
         <main class="container mx-auto p-6 flex space-x-6">

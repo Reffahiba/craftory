@@ -10,6 +10,13 @@
                 <img src="{{ asset('assets/img/craftory-word.png') }}" alt="craftory-word" class="w-50 h-50 ml-5">
             </div>
             <div class="flex items-center space-x-4">
+                @if ($toko->status_verifikasi == 'terverifikasi')
+                    <img src="{{ asset('assets/img/tick-circle.png') }}" alt="terverifikasi" class="w-7 h-7">
+                @elseif ($toko->status_verifikasi == 'menunggu')
+                    <img src="{{ asset('assets/img/info-circle.png') }}" alt="menunggu" class="w-7 h-7">
+                @else
+                    <img src="{{ asset('assets/img/close-circle.png') }}" alt="ditolak" class="w-7 h-7">
+                @endif
                 <span class="text-gray-700">Halo, <?= $user->nama_user ?></span>
                 <img src="{{ asset('assets/img/profile.png') }}" alt="user-profile" class="w-10 h-10 rounded-full" id="gambar-profil">
 

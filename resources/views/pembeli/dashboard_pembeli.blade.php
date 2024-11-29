@@ -42,10 +42,29 @@
             </div>
 
             <!-- Search Bar -->
-            <div class="flex items-center mb-4 mt-3 ml-3">
-                <input type="text" placeholder="Cari kategori" class="border rounded p-2 w-full max-w-xs">
-                <button class="ml-2 text-gray-500">🔍</button>
-            </div>
+            <form action="{{ route('dashboard-pembeli') }}" method="GET" class="flex items-center mb-4 mt-3 ml-3">
+                <div class="flex flex-col mr-5">
+                    <label for="kategori" class="text-sm font-medium mb-1 ml-2">Kategori</label>
+                    {{-- <input type="text" name="kategori" placeholder="Kategori" value="{{ request('kategori') }}" class="border rounded p-2 ml-2 w-full max-w-xs"> --}}
+                    <select name="kategori" id="kategori" class="border rounded p-2 ml-2 w-full max-w-xs">
+                        <option value="" disabled selected>Pilih Kategori</option>
+                        @foreach ($kategori as $kategoriItem)
+                            <option value="{{ $kategoriItem->nama_kategori }}" {{ request('kategori') == $kategoriItem->id ? 'selected' : ''}}>{{ $kategoriItem->nama_kategori }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="flex flex-col mr-5">
+                    <label for="min_harga" class="text-sm font-medium mb-1 ml-2">Min Harga</label>
+                    <input type="number" name="min_harga" placeholder="Min Harga" value="{{ request('min_harga') }}" class="border rounded p-2 ml-2 w-28">
+                </div>
+                <div class="flex flex-col mr-2">
+                    <label for="max_harga" class="text-sm font-medium mb-1 ml-2">Max Harga</label>
+                    <input type="number" name="max_harga" placeholder="Max Harga" value="{{ request('max_harga') }}" class="border rounded p-2 ml-2 w-28">
+                </div>
+                <div class="flex flex-col mt-6">
+                    <button type="submit" class="ml-2 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-700">🔍 Cari</button>
+                </div>
+            </form>
 
             <!-- Produk Populer -->
             <section class="mt-10">
@@ -55,6 +74,7 @@
                         <div class="bg-white shadow rounded-lg pl-2 overflow-hidden hover:shadow-lg transition-shadow duration-300">
                             <img src="{{ asset($produkItem->foto_produk) }}" alt="{{ $produkItem->nama_produk }}" class="w-36 h-36 mt-2 ml-1 object-cover">
                             <div class="p-4">
+                                <h2 class="text-lg font-bold text-gray-800 truncate">{{ $produkItem->toko->nama_toko }}</h2>
                                 <h3 class="text-lg font-semibold text-gray-800 truncate">{{ $produkItem->nama_produk }}</h3>
                                 <p class="text-rust font-bold mt-2">Rp{{ number_format($produkItem->harga, 0, ',', '.') }}</p>
                                 <p class="text-black mt-1">Stok: {{ $produkItem->stok }}</p>
@@ -74,14 +94,14 @@
                     @endforelse
                 </div>
             </section>
+
+            <footer class="bg-rust text-white py-6 mt-10">
+                <div class="container mx-auto text-center">
+                    <p>&copy; 2024 Craftery. All rights reserved.</p>
+                </div>
+            </footer>
         </main>
     </div>
-
-    <footer class="bg-rust text-white py-6 mt-10">
-        <div class="container mx-auto text-center">
-            <p>&copy; 2024 Craftery. All rights reserved.</p>
-        </div>
-    </footer>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

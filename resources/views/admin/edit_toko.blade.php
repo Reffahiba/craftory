@@ -44,9 +44,15 @@
                     @csrf
                     @method('PUT')
                     <div>
-                        <label for="deskripsi" class="block font-bold pb-1">Status Verifikasi:</label>
-                        <input type="text" name="status_verifikasi" id="status_verifikasi" value="{{ old('deskripsi', $toko->status_verifikasi) }}" class="block w-full rounded-lg py-2 px-2 border border-gray-300">
-                        @foreach ($errors->get('deskripsi') as $msg )
+                        <label for="status_verifikasi" class="block font-bold pb-1">Status Verifikasi:</label>
+                        <select name="status_verifikasi" id="status_verifikasi" class="block w-full rounded-lg py-2 px-2 border border-gray-300">
+                            <option value="" disabled selected></option>
+                            <option value="terverifikasi" {{ old('status_verifikasi', $toko->status_verifikasi) == 'terverifikasi' ? 'selected' : '' }}>terverifikasi</option>
+                            <option value="menunggu" {{ old('status_verifikasi', $toko->status_verifikasi) == 'menunggu' ? 'selected' : '' }}>menunggu</option>
+                            <option value="ditolak" {{ old('status_verifikasi', $toko->status_verifikasi) == 'ditolak' ? 'selected' : '' }}>ditolak</option>
+                        </select>
+
+                        @foreach ($errors->get('status_verifikasi') as $msg)
                             <p class="text-red-600">{{ $msg }}</p>
                         @endforeach
                     </div>

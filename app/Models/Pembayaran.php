@@ -14,10 +14,11 @@ class Pembayaran extends Model
     protected $fillable = [
         'tanggal_pembayaran',
         'jumlah_dibayar',
+        'snap_token',
         'pesanan_id',
     ];
 
     public function pesanan(){
-        return $this->belongsTo(UserModel::class, 'user_id');
+        return $this->belongsTo(Pesanan::class, 'pesanan_id');
     }
 }

@@ -38,15 +38,6 @@
                         <label for="alamat_pengiriman" class="block text-sm font-semibold text-gray-700">Alamat Pengiriman</label>
                         <input type="text" name="alamat_pengiriman" id="alamat_pengiriman" class="mt-2 w-full p-3 border border-gray-300 rounded-md" required>
                     </div>
-
-                    <div class="mt-4">
-                        <label for="metode_pembayaran" class="block text-sm font-semibold text-gray-700">Metode Pembayaran</label>
-                        <select name="metode_pembayaran" id="metode_pembayaran" class="mt-2 w-full p-3 border border-gray-300 rounded-md" required>
-                            <option value="" disabled selected>Pilih Metode</option>
-                            <option value="transfer">Transfer Bank</option>
-                            <option value="cod">Cash on Delivery</option>
-                        </select>
-                    </div>
                     <button type="submit" class="mt-6 w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition">Buat Pesanan</button>
                 </form>
             </div>

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Produk extends Model
 {
@@ -17,12 +18,16 @@ class Produk extends Model
         'deskripsi',
         'harga',
         'stok',
-        'user_id',
+        'toko_id',
         'kategori_id',
     ];
 
     public function kategori(){
         return $this->belongsTo(Kategori::class, 'kategori_id');
+    }
+
+    public function toko(){
+        return $this->belongsTo(Toko::class, 'toko_id');
     }
 
     public function item_pesanan(){
@@ -31,5 +36,14 @@ class Produk extends Model
 
     public function getProduk(){
         return Produk::with('kategori')->get();
+    }
+
+    public function getProdukByPenjual($id){
+    return Produk::whereExists(function ($query) use ($id) {
+            $query->select(DB::raw(1)) // memilih kolom apa saja, misalnya 1
+                ->from('toko')
+                ->whereRaw('produk.toko_id = toko.id')
+                ->where('toko.user_id', $id);
+        })->get();
     }
 }

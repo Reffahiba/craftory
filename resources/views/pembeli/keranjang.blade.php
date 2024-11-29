@@ -8,7 +8,6 @@
 </head>
 
 <body class="bg-gray-100 font-sans">
-
     <header class="flex items-center justify-between bg-white p-4 shadow-md">
         <div class="flex items-center space-x-3">
             <a href="{{ route('dashboard-pembeli') }}" class="text-gray-700 mr-1 hover:bg-gray-300">
@@ -18,7 +17,7 @@
         </div>
         <div class="flex items-center space-x-4">
             <div class="flex flex-col items-center mr-10">
-                <a href="{{ route('keranjang', ['id' => $pesanan->id]) }}"><img src="{{ asset('assets/img/Cart1 with buy.png') }}" alt="keranjang" class="w-8 h-8"></a>
+                <a href="{{ route('keranjang') }}"><img src="{{ asset('assets/img/Cart1 with buy.png') }}" alt="keranjang" class="w-8 h-8"></a>
                 <span class="text-gray-700 text-sm">My Cart</span>
             </div>
             <span class="text-gray-700">Halo, <?= $user->nama_user ?></span>
@@ -50,16 +49,16 @@
             <!-- Produk -->
             <div class="w-3/4">
                 <table class="w-full border-collapse border">
-                    <thead>
-                        <tr class="bg-light-apricot text-white">
-                            <th class="p-4 text-left text-rust">Produk</th>
-                            <th class="p-4 text-left text-rust">Harga</th>
-                            <th class="p-4 text-left text-rust">Jumlah</th>
-                            <th class="p-4 text-left text-rust">Subtotal</th>
-                            <th class="p-4"></th>
-                        </tr>
-                    </thead>
                     @if($pesanan && $pesanan->item_pesanan->isNotEmpty())
+                        <thead>
+                            <tr class="bg-light-apricot text-white">
+                                <th class="p-4 text-left text-rust">Produk</th>
+                                <th class="p-4 text-left text-rust">Harga</th>
+                                <th class="p-4 text-left text-rust">Jumlah</th>
+                                <th class="p-4 text-left text-rust">Subtotal</th>
+                                <th class="p-4"></th>
+                            </tr>
+                        </thead>
                         <tbody>
                             @foreach($pesanan->item_pesanan as $item)
                                 <tr class="border-b">
@@ -92,23 +91,38 @@
                                     </td>
                                 </tr>
                             @endforeach
+                                <tr>
+                                    <td class="py-6 text-center" colspan="5">
+                                        <button class="bg-purple-brown rounded-lg"><a href="{{ route('dashboard-pembeli') }}" class="text-white text-center p-3 font-medium">Tambah</a></button>
+                                    </td>
+                                </tr>
                         </tbody>
                     @else
-                        <tr>
-                            <td colspan="5" class="text-center py-4">Keranjang Kosong</td>
-                        </tr>
+                        <thead>
+                            <th class="bg-light-apricot text-black">Keranjang Kosong</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="py-6 text-center">
+                                    <button class="bg-purple-brown rounded-lg"><a href="{{ route('dashboard-pembeli') }}" class="text-white text-center p-3 font-medium">Tambah</a></button>
+                                </td>
+                            </tr>
+                        </tbody>
                     @endif
                 </table>
             </div>
 
             <!-- Total Keranjang -->
             <div class="w-1/4 bg-rust text-white p-6 rounded-lg h-full max-h-[500px] overflow-y-auto">
-                <h2 class="text-lg font-bold mb-4">Total Keranjang</h2>
-                <div class="flex justify-between mt-2">
-                    <span>Total Harga</span>
-                    <span class="font-bold text-lg">Rp{{ number_format($pesanan->item_pesanan->sum('sub_total'), 0, ',', '.') }}</span>
-                </div>
-                <button class="w-full bg-white text-purple-brown font-medium mt-4 py-2 rounded">Check Out</button>
+                <form action="{{ route('checkOut') }}" method="POST">
+                    @csrf
+                    <h2 class="text-lg font-bold mb-4">Total Keranjang</h2>
+                    <div class="flex justify-between mt-2">
+                        <span>Total Harga</span>
+                        <span class="font-bold text-lg">Rp{{ number_format($pesanan->item_pesanan->sum('sub_total'), 0, ',', '.') }}</span>
+                    </div>
+                    <button type="submit" class="w-full bg-white text-purple-brown font-medium mt-4 py-2 rounded">Check Out</button>
+                </form>
             </div>
         </div>
     </div>
