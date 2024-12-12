@@ -91,8 +91,7 @@ class PembeliController extends Controller
     }
 
     public function update_profile_pembeli(Request $request, $id){   
-        $user = UserModel::findOrFail($id);
-        $user->foto_user = $request->foto_user;
+        $user = UserModel::findOrFail($id); 
         $user->nama_user = $request->nama_user;
         $user->email = $request->email;
         $user->no_telepon = $request->no_telepon;
@@ -126,6 +125,14 @@ class PembeliController extends Controller
             'total_harga' => 0,
         ]);
 
+        if ($request->session()->has('produk_id')) {
+            $produk = Produk::findOrFail($request->session()->get('produk_id'));
+            $this->tambahProdukKeKeranjang($pesanan, $produk);
+
+            // Hapus session setelah produk ditambahkan
+            $request->session()->forget('produk_id');
+        }
+
         // Redirect untuk menambahkan produk ke keranjang
         return redirect()->route('keranjang');
     }
@@ -145,23 +152,28 @@ class PembeliController extends Controller
         $pesanan = Pesanan::where('user_id', Auth::id())->where('status_pesanan', 'pending')->first();
 
         if(!$pesanan){
+            $request->session()->put('produk_id', $produk->id);
             return redirect()->route('buat-pesanan');
         }
-        
-        $itemPesanan = ItemPesanan::firstOrNew([
+
+        $this->tambahProdukKeKeranjang($pesanan, $produk);
+
+        return redirect()->route('keranjang'); // Redirect ke halaman keranjang
+    }
+
+    private function tambahProdukKeKeranjang($pesanan, $produk){
+        $keranjang = ItemPesanan::firstOrNew([
             'pesanan_id' => $pesanan->id,
             'produk_id' => $produk->id,
         ]);
 
-        // Cek jika produk sudah ada di keranjang
-        $keranjang = ItemPesanan::where('produk_id', $produk->id)->where('pesanan_id', $pesanan->id)->first();
-
-        if ($keranjang) {
+        if ($keranjang->exists) {
             // Jika sudah ada, tambahkan jumlahnya
             $keranjang->kuantitas += 1;
             $keranjang->sub_total = $keranjang->kuantitas * $produk->harga;
             $keranjang->save();
         } else {
+            // Jika belum ada, buat item baru
             ItemPesanan::create([
                 'user_id' => Auth::id(),
                 'pesanan_id' => $pesanan->id,
@@ -171,10 +183,9 @@ class PembeliController extends Controller
             ]);
         }
 
+        // Update total harga pesanan
         $pesanan->total_harga = ItemPesanan::where('pesanan_id', $pesanan->id)->sum('sub_total');
         $pesanan->save();
-
-        return redirect()->route('keranjang'); // Redirect ke halaman keranjang
     }
 
     public function update_keranjang(Request $request, $id, $action)
@@ -226,10 +237,6 @@ class PembeliController extends Controller
                 'tanggal_pembayaran' => now(),
             ]);
         } 
-        //     else {
-        // //     return redirect()->route('keranjang', $pesanan->id)->with('error', 'Pesanan tidak ditemukan.');
-        // // }
-
         // Set your Merchant Server Key
         \Midtrans\Config::$serverKey = config('midtrans.serverKey');
         // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
@@ -271,6 +278,21 @@ class PembeliController extends Controller
             'pesanan' => $pesanan,
         ];
 
-        return view('pembeli.checkout_sukses', $data);
+        return view('pembeli/checkout_sukses', $data);
+
+    }
+
+    public function daftar_transaksi(){
+        $user_id = Auth::id();
+
+        $transaksi = DB::table('pembayaran')
+            ->join('pesanan', 'pesanan.id', '=', 'pembayaran.pesanan_id')
+            ->select('pembayaran.*', 'pesanan.*')
+            ->where('pesanan.user_id', $user_id)   
+            ->get();
+        
+        $title = 'Data Transaksi';
+
+        return view('pembeli/daftar_transaksi', compact('transaksi', 'title'));
     }
 }

@@ -54,12 +54,6 @@
                     <a href="{{ route('data-produk') }}" class="flex items-center space-x-1 p-3 rounded text-purple-brown font-medium hover:bg-red-200">
                         <span>📦</span><span>Produk</span>
                     </a>
-                    <a href="#" class="flex items-center space-x-1 p-3 rounded text-purple-brown font-medium hover:bg-red-200">
-                        <span>🛒</span><span>Pesanan</span>
-                    </a>
-                    <a href="/pengaturan_toko" class="flex items-center space-x-1 p-3 rounded text-purple-brown font-medium hover:bg-red-200">
-                        <span>⚙️</span><span>Pengaturan Toko</span>
-                    </a>
                 </div>
             </nav>
         </aside>

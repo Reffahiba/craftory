@@ -61,9 +61,9 @@ class PenjualController extends Controller
 
     public function update_profile_penjual(Request $request, $id){
         $user = UserModel::findOrFail($id);
-        $user->foto_user = $request->foto_user;
         $user->nama_user = $request->nama_user;
         $user->email = $request->email;
+        $user->no_telepon = $request->no_telepon;
 
         if($request->hasFile('foto_user')){
             $fileName = time() . '.' . $request->foto_user->extension();
@@ -142,9 +142,11 @@ class PenjualController extends Controller
     }
 
     public function edit_produk($id){
+        $userId = Auth::id();
         $produk = Produk::findOrFail($id);
         $kategori = $this->kategori->getKategori();
-        return  view('penjual/edit_produk', compact('produk', 'kategori'));     
+        $toko = Toko::where('user_id', $userId)->first();
+        return  view('penjual/edit_produk', compact('produk', 'kategori', 'toko'));     
     }
 
     public function update_produk(Request $request, $id){

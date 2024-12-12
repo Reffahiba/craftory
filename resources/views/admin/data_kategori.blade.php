@@ -15,8 +15,7 @@
 
                 <div id="dropdown" class="hidden absolute mt-44 right-0 w-48 bg-white rounded-md shadow-lg z-10">
                     <div class="py-2">
-                        <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-300">Profil</a>
-                        <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-300">Pengaturan</a>
+                        <a href="{{ route('profile-admin') }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-300">Profil</a>
                         <form action="{{ route('logout-admin') }}" method="POST">
                             @csrf
                             <button type="submit" class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-300">Keluar</button>
@@ -44,12 +43,6 @@
                         <a href="{{ route('data-toko') }}" class="flex items-center space-x-1 p-3 rounded text-purple-brown font-medium hover:bg-red-200">
                             <span>🛒</span><span>Toko</span>
                         </a>
-                        {{-- <a href="#" class="flex items-center space-x-1 p-3 rounded text-purple-brown font-medium hover:bg-red-200">
-                            <span>📊</span><span>Laporan</span>
-                        </a>
-                        <a href="/pengaturan_toko" class="flex items-center space-x-1 p-3 rounded text-purple-brown font-medium hover:bg-red-200">
-                            <span>⚙️</span><span>Pengaturan Toko</span>
-                        </a> --}}
                     </div>
                 </nav>
             </aside>
@@ -104,41 +97,6 @@
                         </tbody>
                     </table>
                 </div>
-                <!-- Product Table -->
-                {{-- <div class="overflow-auto bg-white shadow rounded-lg">
-                    <table class="min-w-full bg-white">
-                        <thead class="bg-gray-200 text-gray-600">
-                            <tr>
-                                <th class="py-3 px-6 text-left">Nama Produk</th>
-                                <th class="py-3 px-6 text-left">Deskripsi</th>
-                                <th class="py-3 px-6 text-left">Harga</th>
-                                <th class="py-3 px-6 text-left">Stok</th>
-                                <th class="py-3 px-6 text-left">Kategori</th>
-                                <th class="py-3 px-6 text-center">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-gray-700">
-                            <!-- Example Row -->
-                            @foreach($products as $product)
-                            <tr class="border-b">
-                                <td class="py-3 px-6 flex items-center">
-                                    <img src="{{ $product->image }}" alt="Product Image" class="w-10 h-10 mr-3 rounded">
-                                    {{ $product->name }}
-                                </td>
-                                <td class="py-3 px-6">{{ Str::limit($product->description, 30) }}</td>
-                                <td class="py-3 px-6">Rp{{ number_format($product->price, 0, ',', '.') }}</td>
-                                <td class="py-3 px-6">{{ $product->stock }}</td>
-                                <td class="py-3 px-6">{{ $product->category }}</td>
-                                <td class="py-3 px-6 text-center">
-                                    <button class="text-blue-500 mr-2">✏️</button>
-                                    <button class="text-red-500">🗑️</button>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div> --}}
-
                 {{-- <!-- Pagination -->
                 <div class="flex justify-center mt-6">
                     {{ $products->links() }}

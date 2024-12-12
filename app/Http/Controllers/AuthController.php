@@ -70,24 +70,38 @@ class AuthController extends Controller
     }
 
     public function admin_login_proses(Request $request){
+        if (Auth::check() && Auth::user()->role_id === 1) {
+            return redirect('admin/dashboard_admin');
+        }
+        
         $kredensial = $request->validate([
             'email' => 'required|email',
             'password' => 'required|string',
         ]);
 
-        if(Auth::attempt($kredensial)){
+        $user = UserModel::where('email', $kredensial['email'])->first();
+
+        // Periksa apakah pengguna ditemukan dan role_id sesuai
+        if (!$user || !in_array($user->role_id, [1])) {
+            return back()->withErrors([
+                'email' => 'Akses hanya diperbolehkan untuk admin.',
+            ]);
+        }
+
+        // Periksa kredensial
+        if (Auth::attempt($kredensial)) {
             $request->session()->regenerate();
 
-            $role = Auth::user()->role_id;
-
-            if($role === 1){
+            // Redirect berdasarkan role_id
+            if ($user->role_id === 1) {
                 return redirect()->intended('admin/dashboard_admin');
             }
         }
 
+        // Jika autentikasi gagal
         return back()->withErrors([
             'email' => 'Kredensial yang dimasukkan tidak sesuai.',
-        ]); 
+        ]);
     }
 
     public function logout_admin(Request $request){
@@ -98,38 +112,38 @@ class AuthController extends Controller
         return redirect('/admin_login')->with('sukses', 'Kamu berhasil logout');
     }
 
-    public function verifikasi_toko($id){
-        $user = UserModel::findOrFail($id);
+    // public function verifikasi_toko($id){
+    //     $user = UserModel::findOrFail($id);
 
-        if($user->role_id != 2){
-            return redirect()->back()->with('error', 'User ini bukan penjual');
-        }
+    //     if($user->role_id != 2){
+    //         return redirect()->back()->with('error', 'User ini bukan penjual');
+    //     }
 
-        if($user->toko){
-            $user->toko->status_verifikasi = 'terverifikasi';
-            $user->toko->save();
+    //     if($user->toko){
+    //         $user->toko->status_verifikasi = 'terverifikasi';
+    //         $user->toko->save();
 
-            return redirect()->back()->with('sukses', 'Toko berhasil diverifikasi');
-        }
+    //         return redirect()->back()->with('sukses', 'Toko berhasil diverifikasi');
+    //     }
 
-        return redirect()->back()->with('sukses', 'Toko tidak ditemukan');
-    }
+    //     return redirect()->back()->with('sukses', 'Toko tidak ditemukan');
+    // }
 
-    public function tolak_verifikasi_toko($id){
-        $user = UserModel::findOrFail($id);
+    // public function tolak_verifikasi_toko($id){
+    //     $user = UserModel::findOrFail($id);
 
-        if($user->role_id != 2){
-            return redirect()->back()->with('error', 'User ini bukan penjual');
-        }
+    //     if($user->role_id != 2){
+    //         return redirect()->back()->with('error', 'User ini bukan penjual');
+    //     }
 
-        if($user->toko){
-            $user->toko->status_verifikasi = 'ditolak';
-            $user->toko->save();
+    //     if($user->toko){
+    //         $user->toko->status_verifikasi = 'ditolak';
+    //         $user->toko->save();
 
-            return redirect()->back()->with('sukses', 'Toko ditolak!');
-        }
+    //         return redirect()->back()->with('sukses', 'Toko ditolak!');
+    //     }
 
-        return redirect()->back()->with('sukses', 'Toko tidak ditemukan');
-    }
+    //     return redirect()->back()->with('sukses', 'Toko tidak ditemukan');
+    // }
 
 }

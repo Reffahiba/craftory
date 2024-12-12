@@ -16,7 +16,6 @@
         <div id="dropdown" class="hidden absolute mt-44 right-0 w-48 bg-white rounded-md shadow-lg z-10">
             <div class="py-2">
                 <a href="{{ route('profile-admin') }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-300">Profil</a>
-                <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-300">Pengaturan</a>
                 <form action="{{ route('logout-admin') }}" method="POST">
                     @csrf
                     <button type="submit" class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-300">Keluar</button>
@@ -39,24 +38,7 @@
                     <h2 class="text-xl font-semibold text-gray-700"><?= $user->nama_user ?></h2>
                 </div>
                 <nav class="space-y-2">
-                    <a
-                        href="#"
-                        class="block p-3 bg-rust text-white rounded-lg font-medium hover:bg-rust-dark"
-                    >
-                        Biodata Diri
-                    </a>
-                    <a
-                        href="#"
-                        class="block p-3 text-gray-700 rounded-lg font-medium hover:bg-gray-100"
-                    >
-                        Password
-                    </a>
-                    <a
-                        href="#"
-                        class="block p-3 text-gray-700 rounded-lg font-medium hover:bg-gray-100"
-                    >
-                        Daftar Transaksi
-                    </a>
+                    <a href="{{ route('profile-pembeli') }}" class="block p-3 bg-rust text-white rounded-lg font-medium hover:bg-purple-brown">Biodata Diri</a>
                 </nav>
             </aside>
 
@@ -72,15 +54,15 @@
                     <div class="md:w-2/3 space-y-4">
                         <div>
                             <label for="name" class="block text-gray-700 font-medium mb-1">Nama</label>
-                            <input type="text" id="name" class="w-full border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-rust" readonly value=<?= $user->nama_user ?>>
+                            <input type="text" id="name" class="w-full border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-rust" readonly value="{{ old('nama_user', $user->nama_user) }}">
                         </div>
                         <div>
                             <label for="email" class="block text-gray-700 font-medium mb-1">Email</label>
-                            <input type="email" id="email" class="w-full border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-rust" readonly value=<?= $user->email ?>>
+                            <input type="email" id="email" class="w-full border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-rust" readonly value="{{ old('email', $user->email) }}">
                         </div>
                         <div>
                             <label for="phone" class="block text-gray-700 font-medium mb-1">Nomor Telepon</label>
-                            <input type="text" id="phone" class="w-full border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-rust" readonly value=<?= $user->no_telepon ?>>
+                            <input type="text" id="phone" class="w-full border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-rust" readonly value="{{ old('no_telepon', $user->no_telepon) }}">
                         </div>
                         <button type="submit" class="bg-rust text-white px-4 py-2 rounded-lg font-medium hover:bg-rust-dark"><a href="{{ route('edit-profile-penjual', ['id' => $user->id]) }}">Ubah Biodata</a></button>
                     </div>

@@ -18,7 +18,7 @@
                     <img src="{{ asset('assets/img/close-circle.png') }}" alt="ditolak" class="w-7 h-7">
                 @endif
                 <span class="text-gray-700">Halo, <?= $user->nama_user ?></span>
-                <img src="{{ asset('assets/img/profile.png') }}" alt="user-profile" class="w-10 h-10 rounded-full" id="gambar-profil">
+                <img src="{{ asset($user->foto_user) }}" alt="user-profile" class="w-10 h-10 rounded-full" id="gambar-profil">
 
                 <div id="dropdown" class="hidden absolute mt-44 right-0 w-48 bg-white rounded-md shadow-lg z-10">
                     <div class="py-2">

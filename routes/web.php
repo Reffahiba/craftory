@@ -24,25 +24,23 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/admin_login', [AuthController::class, 'admin_login'])->name('login-admin');
-Route::post('/admin_login_proses', [AuthController::class, 'admin_login_proses'])->name('login-admin-proses');
-Route::get('/admin_register', [AuthController::class, 'admin_register'])->name('register-admin');
-Route::post('/admin_register_proses', [AuthController::class, 'admin_register_proses'])->name('register-admin-proses');
 Route::post('/logout_admin', [AuthController::class, 'logout_admin'])->name('logout-admin'); 
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout'); 
 
-Route::get('/login', [LoginController::class, 'login'])->name('login');
-Route::post('/login_proses', [LoginController::class, 'login_proses'])->name('login-proses');
-Route::get('/register', [LoginController::class, 'register'])->name('register');
-Route::post('/register_proses', [LoginController::class, 'register_proses'])->name('register-proses');
-Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-Route::get('/register_toko', [LoginController::class, 'register_toko'])->name('register-toko'); 
-Route::post('/register_toko_proses', [LoginController::class, 'register_toko_proses'])->name('register-toko-proses'); 
-
-Route::middleware('guest')->group(function(){
+Route::middleware(['guest'])->group(function(){
+    Route::get('/login', [LoginController::class, 'login'])->name('login');
+    Route::post('/login_proses', [LoginController::class, 'login_proses'])->name('login-proses');
+    Route::get('/register', [LoginController::class, 'register'])->name('register');
+    Route::post('/register_proses', [LoginController::class, 'register_proses'])->name('register-proses');
+    Route::get('/register_toko', [LoginController::class, 'register_toko'])->name('register-toko'); 
+    Route::post('/register_toko_proses', [LoginController::class, 'register_toko_proses'])->name('register-toko-proses'); 
     Route::get('/admin_login', [AuthController::class, 'admin_login'])->name('login-admin');
     Route::post('/admin_login_proses', [AuthController::class, 'admin_login_proses'])->name('login-admin-proses');
     Route::get('/admin_register', [AuthController::class, 'admin_register'])->name('register-admin');
     Route::post('/admin_register_proses', [AuthController::class, 'admin_register_proses'])->name('register-admin-proses');
+});
+
+Route::middleware(['auth', 'role:1'])->group(function(){
     Route::get('/admin/dashboard_admin', [AdminController::class, 'dashboard_admin'])->name('dashboard-admin');
     Route::get('/admin/profile_admin', [AdminController::class, 'profile_admin'])->name('profile-admin');
     Route::get('/admin/edit_profile/{id}', [AdminController::class, 'edit_profile_admin'])->name('edit-profile-admin');
@@ -50,7 +48,6 @@ Route::middleware('guest')->group(function(){
     Route::get('/admin/data_kategori', [AdminController::class, 'data_kategori'])->name('data-kategori');
     Route::get('/admin/tambah_kategori', [AdminController::class, 'tambah_kategori'])->name('tambah-kategori');
     Route::post('/admin/tambah_kategori_proses', [AdminController::class, 'tambah_kategori_proses'])->name('kategori-store');
-    Route::get('/admin/tambah_kategori', [AdminController::class, 'tambah_kategori'])->name('tambah-kategori');
     Route::get('/admin/edit_kategori/{id}', [AdminController::class, 'edit_kategori'])->name('edit-kategori');
     Route::put('/admin/update_kategori/{id}', [AdminController::class, 'update_kategori'])->name('kategori-update');
     Route::delete('/admin/delete_kategori/{id}', [AdminController::class, 'delete_kategori'])->name('hapus-kategori');
@@ -61,7 +58,6 @@ Route::middleware('guest')->group(function(){
 });
 
 Route::middleware(['auth', 'role:2'])->group(function(){
-    Route::post('/register_toko_proses', [LoginController::class, 'register_toko_proses'])->name('register-toko-proses'); 
     Route::get('/penjual/dashboard_penjual', [PenjualController::class, 'dashboard_penjual'])->name('dashboard-penjual');
     Route::get('/penjual/profile_penjual', [PenjualController::class, 'profile_penjual'])->name('profile-penjual');
     Route::get('/penjual/edit_profile/{id}', [PenjualController::class, 'edit_profile_penjual'])->name('edit-profile-penjual');
@@ -87,4 +83,5 @@ Route::middleware(['auth', 'role:3'])->group(function() {
     Route::post('/pembeli/delete_keranjang/{id}', [PembeliController::class, 'hapus_keranjang'])->name('hapus-keranjang'); 
     Route::post('/pembeli/checkout', [PembeliController::class, 'checkOut'])->name('checkOut');
     Route::get('/pembeli/checkout_selesai/{id}', [PembeliController::class, 'checkOut_selesai'])->name('checkOut-selesai');
+    Route::get('/pembeli/daftar_transaksi', [PembeliController::class, 'daftar_transaksi'])->name('daftar-transaksi'); 
 });

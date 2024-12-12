@@ -20,7 +20,7 @@
         <div class="w-full max-w-4xl">
             <div class="bg-light-apricot rounded-2xl overflow-hidden flex shadow-2xl border border-rust">
                 <div class="w-1/2 justify-center items-center p-8">
-                    <img src="{{ asset('assets/img/login.png') }}" alt="logo-login" class="w-full h-full ml-5">
+                    <img src="{{ asset('assets/img/potter-wheel 1.png') }}" alt="logo-login" class="w-80 h-100 ml-20 mt-28">
                 </div>
                 <div class="w-1/2 justify-center items-center p-8">
                     <div class="flex flex-col justify-center items-center mr-3 mt-5">

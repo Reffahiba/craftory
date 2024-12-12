@@ -54,12 +54,6 @@
                     <a href="{{ route('data-produk') }}" class="flex items-center space-x-1 p-3 rounded bg-rust  text-white font-medium">
                         <span>📦</span><span>Produk</span>
                     </a>
-                    <a href="#" class="flex items-center space-x-1 p-3 rounded text-purple-brown font-medium hover:bg-red-200">
-                        <span>🛒</span><span>Pesanan</span>
-                    </a>
-                    <a href="/pengaturan_toko" class="flex items-center space-x-1 p-3 rounded text-purple-brown font-medium hover:bg-red-200">
-                        <span>⚙️</span><span>Pengaturan Toko</span>
-                    </a>
                 </div>
             </nav>
         </aside>
@@ -70,12 +64,6 @@
             <div class="flex justify-between items-center mb-8">
                 <h1 class="text-3xl font-semibold">Daftar Produk</h1>
                 <button class="bg-rust text-white px-4 py-2 rounded hover:bg-red-600"><a href="{{ route('tambah-produk', ['id' => $user->id]) }}">+ Tambah Produk Baru</a></button>
-            </div>
-
-            <!-- Search Bar -->
-            <div class="flex items-center mb-4">
-                <input type="text" placeholder="Cari nama produk" class="border rounded p-2 w-full max-w-xs">
-                <button class="ml-2 text-gray-500">🔍</button>
             </div>
 
             <div class="overflow-auto bg-white shadow rounded-lg">

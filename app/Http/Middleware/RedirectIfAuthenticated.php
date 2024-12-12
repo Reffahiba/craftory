@@ -20,7 +20,9 @@ class RedirectIfAuthenticated
         if (Auth::check()) {
             $role = Auth::user()->role_id;
 
-            if ($role === 2) {
+            if($role === 1){
+                return redirect('/admin/dashboard_admin');
+            } elseif ($role === 2) {
                 return redirect('/penjual/dashboard_penjual');
             } elseif ($role === 3) {
                 return redirect('/pembeli/dashboard_pembeli');

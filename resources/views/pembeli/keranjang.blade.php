@@ -114,15 +114,23 @@
 
             <!-- Total Keranjang -->
             <div class="w-1/4 bg-rust text-white p-6 rounded-lg h-full max-h-[500px] overflow-y-auto">
-                <form action="{{ route('checkOut') }}" method="POST">
-                    @csrf
+                @if($pesanan && $pesanan->item_pesanan->isNotEmpty())
+                    <form action="{{ route('checkOut') }}" method="POST">
+                        @csrf
+                        <h2 class="text-lg font-bold mb-4">Total Keranjang</h2>
+                        <div class="flex justify-between mt-2">
+                            <span>Total Harga</span>
+                            <span class="font-bold text-lg">Rp{{ number_format($pesanan->item_pesanan->sum('sub_total'), 0, ',', '.') }}</span>
+                        </div>
+                        <button type="submit" class="w-full bg-white text-purple-brown font-medium mt-4 py-2 rounded">Check Out</button>
+                    </form>
+                @else
                     <h2 class="text-lg font-bold mb-4">Total Keranjang</h2>
                     <div class="flex justify-between mt-2">
                         <span>Total Harga</span>
-                        <span class="font-bold text-lg">Rp{{ number_format($pesanan->item_pesanan->sum('sub_total'), 0, ',', '.') }}</span>
+                        <span class="font-bold text-lg">Rp0</span>
                     </div>
-                    <button type="submit" class="w-full bg-white text-purple-brown font-medium mt-4 py-2 rounded">Check Out</button>
-                </form>
+                @endif    
             </div>
         </div>
     </div>

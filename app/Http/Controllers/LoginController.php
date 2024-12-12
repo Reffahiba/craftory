@@ -25,23 +25,44 @@ class LoginController extends Controller
     }
 
     public function login_proses(Request $request){
+        if (Auth::check()) {
+            $role = Auth::user()->role_id;
+
+            if ($role === 2) {
+                return redirect('penjual/dashboard_penjual');
+            } else if ($role === 3) {
+                return redirect('pembeli/dashboard_pembeli');
+            }
+        }
+        
         $kredensial = $request->validate([
             'email' => 'required|email',
             'password' => 'required|string',
         ]);
 
-        if(Auth::attempt($kredensial)){
+        // Cari pengguna berdasarkan email
+        $user = UserModel::where('email', $kredensial['email'])->first();
+
+        // Periksa apakah pengguna ditemukan dan role_id sesuai
+        if (!$user || !in_array($user->role_id, [2, 3])) {
+            return back()->withErrors([
+                'email' => 'Akses hanya diperbolehkan untuk penjual dan pembeli.',
+            ]);
+        }
+
+        // Periksa kredensial
+        if (Auth::attempt($kredensial)) {
             $request->session()->regenerate();
 
-            $role = Auth::user()->role_id;
-
-            if($role === 2){
+            // Redirect berdasarkan role_id
+            if ($user->role_id === 2) {
                 return redirect()->intended('penjual/dashboard_penjual');
-            } else if($role === 3){
+            } elseif ($user->role_id === 3) {
                 return redirect()->intended('pembeli/dashboard_pembeli');
             }
         }
 
+        // Jika autentikasi gagal
         return back()->withErrors([
             'email' => 'Kredensial yang dimasukkan tidak sesuai.',
         ]);

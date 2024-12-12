@@ -7,7 +7,9 @@ use App\Models\Produk;
 use App\Models\Toko;
 use Illuminate\Http\Request;
 use App\Models\UserModel;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 
 class AdminController extends Controller
 {
@@ -55,7 +57,6 @@ class AdminController extends Controller
 
     public function update_profile_admin(Request $request, $id){
         $user = UserModel::findOrFail($id);
-        $user->foto_user = $request->foto_user;
         $user->nama_user = $request->nama_user;
         $user->email = $request->email;
 
@@ -68,6 +69,32 @@ class AdminController extends Controller
         $user->save();
 
         return redirect()->route('profile-admin');
+    }
+
+    public function edit_password_admin($id){
+        $user = UserModel::findOrFail($id);
+        $title = 'Ubah Password';
+        return view ('admin/edit_password', compact('user', 'title'));
+    }
+
+    public function update_password_admin(Request $request, $id){
+        $request->validate([
+            'old_pass' => 'required',
+            'new_pass' => 'required|confirmed|min:8',
+            'confirm_pass' => 'required',
+        ]);
+        
+        $user = UserModel::findOrFail($id);
+        $decryptedPassword = Crypt::decrypt($user->password);
+
+        if($decryptedPassword === $request->input('old_pass')){
+            $user->password = Hash::make($request->new_pass);
+            $user->save();
+        } else {
+            return redirect()->back()->withErrors(['old_pass' => 'Password lama tidak sesuai.']);
+        }
+
+        return redirect()->back();
     }
 
     public function data_kategori(){

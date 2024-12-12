@@ -20,12 +20,24 @@
         <div class="w-full max-w-2xl">
             <div class="bg-light-apricot rounded-2xl overflow-hidden flex shadow-2xl border border-rust">
                 <div class="w-1/2 justify-center items-center p-8">
-                    <img src="{{ asset('assets/img/login.png') }}" alt="logo-login" class="w-full h-full ml-5">
+                   <img src="{{ asset('assets/img/potter-wheel 1.png') }}" alt="logo-login" class="w-80 h-100 ml-5 mt-5">
                 </div>
                 <div class="w-1/2 justify-center items-center p-8">
                     <div class="flex flex-col justify-center items-center mr-3 mt-5">
                         <img src="{{ asset('assets/img/craftory-word.png') }}" alt="craftory-word" class="mb-3">
                         <h1 class="font-bold text-3xl my-3 text-purple-brown">LOG IN</h1>
+                        @if (session('success'))
+                            <div class="alert alert-success">
+                                {{ session('success') }}
+                            </div>
+                        @endif
+
+                        @if ($errors->any())
+                            <div class="alert alert-danger">
+                                {{ $errors->first() }}
+                            </div>
+                        @endif
+                        
                         <form action="{{ route('login-admin-proses') }}" method="POST">
                             @csrf
                             <div class="flex flex-col justify-center items-center">
