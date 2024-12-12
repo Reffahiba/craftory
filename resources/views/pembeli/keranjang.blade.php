@@ -115,7 +115,7 @@
             <!-- Total Keranjang -->
             <div class="w-1/4 bg-rust text-white p-6 rounded-lg h-full max-h-[500px] overflow-y-auto">
                 @if($pesanan && $pesanan->item_pesanan->isNotEmpty())
-                    <form action="{{ route('checkOut') }}" method="POST">
+                    <form action="{{ route('checkOut', ['id' => $pesanan->id]) }}" method="POST">
                         @csrf
                         <h2 class="text-lg font-bold mb-4">Total Keranjang</h2>
                         <div class="flex justify-between mt-2">
@@ -134,7 +134,7 @@
             </div>
         </div>
     </div>
-
 </body>
+
 
 </html>

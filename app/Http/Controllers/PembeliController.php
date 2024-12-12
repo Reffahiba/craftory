@@ -108,7 +108,9 @@ class PembeliController extends Controller
     }
 
     public function buat_pesanan(Request $request){
-        return view('pembeli/buat_pesanan');
+        $title = 'Buat Pesanan';
+
+        return view('pembeli/buat_pesanan', compact('title'));
     }
 
     public function simpan_pesanan(Request $request){
@@ -154,6 +156,10 @@ class PembeliController extends Controller
         if(!$pesanan){
             $request->session()->put('produk_id', $produk->id);
             return redirect()->route('buat-pesanan');
+        }
+
+        if($produk->stok < 1){
+            return back()->withErrors("Stok untuk produk {$produk->nama_produk} habis.");
         }
 
         $this->tambahProdukKeKeranjang($pesanan, $produk);
@@ -231,6 +237,16 @@ class PembeliController extends Controller
             // Proses checkout, misalnya ubah status pesanan
             $pesanan->update(['status_pesanan' => 'check out']);
 
+            foreach($pesanan->item_pesanan as $item){
+                $produk = $item->produk;
+                if($produk->stok >= $item->kuantitas){
+                    $produk->stok -= $item->kuantitas; // Kurangi stok
+                    $produk->save();
+                } else {
+                    return redirect()->route('keranjang')->withErrors("Stok untuk produk {$produk->nama_produk} tidak mencukupi.");
+                }
+            }
+
             $pembayaran = Pembayaran::create([
                 'pesanan_id' => $pesanan->id,
                 'jumlah_dibayar' => $pesanan->item_pesanan->sum('sub_total'), // Total pembayaran
@@ -276,10 +292,30 @@ class PembeliController extends Controller
         $data = [
             'pembayaran' => $pembayaran,
             'pesanan' => $pesanan,
+            'title' => 'Pembayaran'
         ];
 
         return view('pembeli/checkout_sukses', $data);
 
+    }
+
+    public function checkOut_batal(Request $request){
+        $pembayaranId = $request->input('pembayaran_id');
+        $pembayaran = Pembayaran::find($pembayaranId);
+
+        if ($pembayaran) {
+            $pesanan = $pembayaran->pesanan;
+
+            foreach ($pesanan->item_pesanan as $item) {
+                $barang = $item->produk; // Relasi ke tabel barang
+                $barang->update(['stok' => $barang->stok + $item->kuantitas]);
+            }
+
+            $pesanan->update(['status_pesanan' => 'pending']);
+            $pembayaran->delete();
+        }
+
+        return redirect()->route('keranjang');
     }
 
     public function daftar_transaksi(){
@@ -291,7 +327,7 @@ class PembeliController extends Controller
             ->where('pesanan.user_id', $user_id)   
             ->get();
         
-        $title = 'Data Transaksi';
+        $title = 'Daftar Transaksi';
 
         return view('pembeli/daftar_transaksi', compact('transaksi', 'title'));
     }

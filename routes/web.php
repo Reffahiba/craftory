@@ -83,5 +83,6 @@ Route::middleware(['auth', 'role:3'])->group(function() {
     Route::post('/pembeli/delete_keranjang/{id}', [PembeliController::class, 'hapus_keranjang'])->name('hapus-keranjang'); 
     Route::post('/pembeli/checkout', [PembeliController::class, 'checkOut'])->name('checkOut');
     Route::get('/pembeli/checkout_selesai/{id}', [PembeliController::class, 'checkOut_selesai'])->name('checkOut-selesai');
+    Route::post('/pembeli/cancel-checkout', [PembeliController::class, 'checkOut_batal'])->name('cancel-checkout');
     Route::get('/pembeli/daftar_transaksi', [PembeliController::class, 'daftar_transaksi'])->name('daftar-transaksi'); 
 });

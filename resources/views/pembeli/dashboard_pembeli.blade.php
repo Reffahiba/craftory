@@ -96,7 +96,7 @@
 
             <footer class="bg-rust text-white py-6 mt-10">
                 <div class="container mx-auto text-center">
-                    <p>&copy; 2024 Craftery. All rights reserved.</p>
+                    <p>&copy; 2024 Craftory. All rights reserved.</p>
                 </div>
             </footer>
         </main>

@@ -82,7 +82,7 @@ class PenjualController extends Controller
         
 
         $data = [
-            'title' => 'Dashboard Penjual',
+            'title' => 'Data Produk',
             'user' => $this->userModel->getUser($userId),
             'produk' => $this->produk->getProdukByPenjual($userId),
             'toko' => $toko,
@@ -143,10 +143,11 @@ class PenjualController extends Controller
 
     public function edit_produk($id){
         $userId = Auth::id();
+        $title = 'Edit Produk';
         $produk = Produk::findOrFail($id);
         $kategori = $this->kategori->getKategori();
         $toko = Toko::where('user_id', $userId)->first();
-        return  view('penjual/edit_produk', compact('produk', 'kategori', 'toko'));     
+        return  view('penjual/edit_produk', compact('produk', 'kategori', 'toko', 'title'));     
     }
 
     public function update_produk(Request $request, $id){

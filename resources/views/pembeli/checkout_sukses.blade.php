@@ -39,7 +39,7 @@
         </p>
         <p class="text-lg text-gray-800 font-medium">
             <strong>Tanggal Pembayaran: </strong> 
-            <span class="text-gray-600">{{ \Carbon\Carbon::parse($pembayaran->tanggal_pembayaran)->format('d M Y') }}</span>
+            <span class="text-gray-600">{{ \Carbon\Carbon::parse($pembayaran->tanggal_)->format('d M Y') }}</span>
         </p>
     </div>
 
@@ -50,6 +50,7 @@
             @foreach($pesanan->item_pesanan as $item)
                 <li class="mb-2">
                     <span class="font-medium text-gray-800">{{ $item->produk->nama_produk }}</span>
+                    : Jumlah {{ $item->kuantitas }} 
                     - Rp{{ number_format($item->sub_total, 0, ',', '.') }}
                 </li>
             @endforeach
@@ -59,10 +60,17 @@
         @endif
     </div>
 
-    <div class="flex justify-center">
+    <div class="flex flex-col justify-center items-center gap-1">
         <button type="button" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg transition duration-200" id="pay-button">
             Bayar Sekarang
         </button>
+        <form action="{{ route('cancel-checkout') }}" method="POST">
+            @csrf
+            <input type="hidden" name="pembayaran_id" value="{{ $pembayaran->id }}">
+            <button type="submit" class="bg-red-600 hover:bg-red-700 mt-2 text-white font-medium py-2 px-6 rounded-lg transition duration-200">
+                Kembali
+            </button>
+        </form>
     </div>
 </div>
 
@@ -78,27 +86,9 @@
             },
             onError: function(result) {
                 document.getElementById('result-json').innerHTML += JSON.stringify(result, null, 2);
-            }
+            },
         });
     };
 </script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const menuToggle = document.getElementById('menu-toggle');
-        const sidebar = document.getElementById('sidebar');
-        const mainContent = document.getElementById('main-content');
-        const menuicon = document.getElementById('menu-icon');
-
-        menuToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('hidden'); 
-
-            if(sidebar.classList.contains('block')){
-                mainContent.classList.add('ml-64');
-            } else {
-                mainContent.classList.remove('ml-64'); 
-            }
-        });
-    });
-</script>
 @endsection
